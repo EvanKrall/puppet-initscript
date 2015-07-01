@@ -1,3 +1,5 @@
+# Note: this module is currently under development and may not work.
+
 # initscript
 Puppet module for creating init scripts
 
