@@ -1,5 +1,7 @@
 # <% @description %> (Upstart unit)
+<% if @description -%>
 description "<% @description %>"
+<% end -%>
 start on (local-filesystems and net-device-up IFACE!=lo)
 stop on runlevel [06]
 
