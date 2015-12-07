@@ -1,15 +1,16 @@
 [Unit]
-Description=Vault Server
+Description=<%= @description %>
 Wants=basic.target
 After=basic.target network.target
 
 [Service]
 <% require 'shellwords' %>
-User=<%= scope.lookupvar('vault::user') %>
-Group=<%= scope.lookupvar('vault::group') %>
-ExecStart=<%= scope.lookupvar('vault::bin_dir').shellescape %>/vault server \
-  -config <%= scope.lookupvar('vault::config_dir').shellescape %> <%= scope.lookupvar('vault::extra_options').shelljoin %>
-ExecReload=/bin/kill -HUP $MAINPID
+User=<%= @user %>
+Group=<%= @group %>
+ExecStart=<%= @command.shelljoin %>
+<% if @reload_command -%>
+ExecReload=<%= @reload_command.shelljoin %>
+<% end -%>
 KillMode=process
 Restart=on-failure
 RestartSec=42s

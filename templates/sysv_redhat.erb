@@ -1,46 +1,44 @@
 #!/bin/bash
+<% require 'shellwords' %>
 #
-#       /etc/rc.d/init.d/vault
+#       /etc/rc.d/init.d/<%= @name %>
 #
-#       Daemonize the vault server.
+#       <%= @description %>
 #
 # chkconfig:   2345 95 95
-# description: A tool for managing secrets.
-# processname: vault
-# pidfile: /var/run/vault/pidfile
+# description: <% @description %>.
+# processname: <%= @command[0].shellescape %>
+# pidfile: /var/run/<%= @name.shellescape %>/pidfile
 
 # Source function library.
 . /etc/init.d/functions
 
-<% require 'shellwords' %>
-VAULT=<%= scope.lookupvar('vault::bin_dir').shellescape %>/vault
-CONFIG=<%= scope.lookupvar('vault::config_dir').shellescape %>
-PID_FILE=/var/run/vault/vault.pid
-LOG_FILE=/var/log/vault
+PID_FILE=/var/run/<%= @name.shellescape %>/pidfile
 
-[ -e /etc/sysconfig/vault ] && . /etc/sysconfig/vault
+[ -e /etc/sysconfig/<%= @name %> ] && . /etc/sysconfig/<%= @name %>
 
 export GOMAXPROCS="${GOMAXPROCS:-2}"
 
 #
-# Create the /var/run/vault directory, which can live on a tmpfs
+# Create the /var/run/<%= @name.shellescape %> directory, which can live on a tmpfs
 # filesystem and be destroyed between reboots.
 #
 mkrundir() {
-        [ ! -d /var/run/vault ] && mkdir -p /var/run/vault
-        chown <%= scope.lookupvar('vault::user') %> /var/run/vault
+        [ ! -d /var/run/<%= @name.shellescape %> ] && mkdir -p /var/run/<%= @name.shellescape %>
+        chown <%= @user.shellescape %> /var/run/<%= @name.shellescape %>
 }
 
 #
 # Create a PID file if it doesn't already exist, for clean upgrades
 # from previous init-script controlled daemons.
 #
+COMMAND_NAME=<%= @command[0].shellescape %>
 KILLPROC_OPT=(-p "${PID_FILE}")
 mkpidfile() {
         # Create PID file if it didn't exist
         mkrundir
-        [ ! -f "$PID_FILE" ] && pidofproc "$VAULT" > "$PID_FILE"
-        chown <%= scope.lookupvar('vault::user').shellescape %> /var/run/vault
+        [ ! -f "$PID_FILE" ] && pidofproc "COMMAND_NAME" > "$PID_FILE"
+        chown <%= @user.shellescape %> /var/run/<%= @name.shellescape %>
         if [ $? -ne 0 ] ; then
             rm "$PID_FILE"
             KILLPROC_OPT=()
@@ -48,24 +46,24 @@ mkpidfile() {
 }
 
 start() {
-        echo -n "Starting vault: "
+        echo -n "Starting "<%= @name.shellescape %>": "
         mkrundir
         [ -f "$PID_FILE" ] && rm "$PID_FILE"
-        daemon --user=<%= scope.lookupvar('vault::user').shellescape %> \
+        daemon --user=<%= @user.shellescape %> \
             --pidfile="$PID_FILE" \
-            "$VAULT" server -config "$CONFIG" <%= scope.lookupvar('vault::extra_options').shelljoin %> >> "$LOG_FILE" &
+            <%= @command.shelljoin %> &
         retcode=$?
-        touch /var/lock/subsys/vault
+        touch /var/lock/subsys/<%= @name.shellescape %>
         return "$retcode"
 }
 
 stop() {
-        echo -n "Shutting down vault: "
+        echo -n "Stopping "<%= @name.shellescape %>": "
         mkpidfile
-        killproc "${KILLPROC_OPT[@]}" "$VAULT" -9
+        killproc "${KILLPROC_OPT[@]}" "COMMAND_NAME" -9
 
         retcode=$?
-        rm -f /var/lock/subsys/vault "$PID_FILE"
+        rm -f /var/lock/subsys/<%= @name.shellescape %> "$PID_FILE"
         return "$retcode"
 }
 
@@ -77,7 +75,7 @@ case "$1" in
         stop
         ;;
     status)
-        "$VAULT" info
+        status -p "$PID_FILE" "$COMMAND_NAME"
         ;;
     restart)
         stop
@@ -85,13 +83,13 @@ case "$1" in
         ;;
     reload)
         mkpidfile
-        killproc "${KILLPROC_OPT[@]}" "$VAULT" -HUP
+        killproc "${KILLPROC_OPT[@]}" "COMMAND_NAME" -HUP
         ;;
     condrestart)
-        [ -f /var/lock/subsys/vault ] && restart || :
+        [ -f /var/lock/subsys/<%= @name.shellescape %> ] && restart || :
         ;;
     *)
-        echo "Usage: vault {start|stop|status|reload|restart}"
+        echo "Usage: "<%= @name.shellescape %>" {start|stop|status|reload|restart}"
         exit 1
         ;;
 esac

@@ -1,19 +1,19 @@
 #!/bin/bash
 #
-#       /etc/rc.d/init.d/vault
+#       /etc/rc.d/init.d/<%= @name %>
 #
-#       Daemonize the vault server.
+#       <%= @description %>
 #
 ### BEGIN INIT INFO
-# Provides:          vault
+# Provides:          <%= @name %>
 # Required-Start:    network
 # Should-Start:      $null
 # Required-Stop:     $null
 # Should-Stop:	     $null
 # Default-Start:     3 5
 # Default-Stop:      0 1 2 6
-# Short-Description: A tool for managing secrets.
-# Description:       A tool for managing secrets.
+# Short-Description: <%= @short_description %>
+# Description:       <%= @description %>
 ### END INIT INFO
 
 . /etc/rc.status
@@ -21,33 +21,28 @@
 rc_reset
 
 <% require 'shellwords' %>
-VAULT_BIN=<%= scope.lookupvar('vault::bin_dir').shellescape %>/vault
-CONFIG_DIR=<%= scope.lookupvar('vault::config_dir').shellescape %>
-LOG_FILE=/var/log/vault
 
-
-# read settings like GOMAXPROCS from "/etc/sysconfig/vault"
-[ -e /etc/sysconfig/vault ] && . /etc/sysconfig/vault
+[ -e /etc/sysconfig/<%= @name.shellescape %> ] && . /etc/sysconfig/<%= @name.shellescape %>
 
 export GOMAXPROCS="${GOMAXPROCS:-2}"
 
 
 case "$1" in
     start)
-        echo -n "Starting vault "
+        echo -n "Starting "<%= @name.shellescape %>
         ## Start daemon with startproc(8). If this fails
         ## the return value is set appropriately by startproc.
-        startproc "$VAULT_BIN" server -config "$CONFIG_DIR" <%= scope.lookupvar('vault::extra_options').shelljoin %> >> "$LOG_FILE"
+        startproc <%= @command.shelljoin %>
 
         # Remember status and be verbose
         rc_status -v
         ;;
     stop)
-        echo -n "Shutting down vault "
+        echo -n "Stopping "<%= @name.shellescape %>": "
         ## Stop daemon with killproc(8) and if this fails
         ## killproc sets the return value according to LSB.
 
-        killproc -TERM "$VAULT_BIN"
+        killproc -TERM <%= @command[0].shellescape %>
 
         # Remember status and be verbose
         rc_status -v
@@ -63,9 +58,8 @@ case "$1" in
         ;;
     reload)
         # If it supports signaling:
-        echo -n "Reload service vault "
-        killproc -HUP "$VAULT_BIN"
-        #touch /var/run/vault.pid
+        echo -n "Reload service "<%= @name.shellescape %>
+        killproc -HUP <%= @command[0].shellescape %>
         rc_status -v
 
         ## Otherwise if it does not support reload:
@@ -73,7 +67,7 @@ case "$1" in
         #rc_status -v
         ;;
     status)
-        echo -n "Checking for service vault "
+        echo -n "Checking for service "<%= @name.shellescape %>
         ## Check status with checkproc(8), if process is running
         ## checkproc will return with exit status 0.
 
@@ -86,7 +80,7 @@ case "$1" in
         # 5--199 reserved (5--99 LSB, 100--149 distro, 150--199 appl.)
 
         # NOTE: checkproc returns LSB compliant status values.
-        checkproc "$VAULT_BIN"
+        checkproc <%= @command[0].shellescape %>
         # NOTE: rc_status knows that we called this init script with
         # "status" option and adapts its messages accordingly.
         rc_status -v

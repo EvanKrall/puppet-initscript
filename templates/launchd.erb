@@ -2,25 +2,21 @@
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>Label</key>             <string>io.vaultproject.daemon</string>
-    <key>UserName</key>          <string><%= scope.lookupvar('vault::user') %></string>
-    <key>GroupName</key>         <string><%= scope.lookupvar('vault::group') %></string>
-<% if scope.lookupvar('vault::service_enable') %>
+    <key>Label</key>             <string><%= @launchd_name %></string>
+    <key>UserName</key>          <string><%= @user %></string>
+    <key>GroupName</key>         <string><%= @group %></string>
+<% if @service_enable -%>
     <key>Disabled</key>          <false/>
-<% else %>
+<% else -%>
     <key>Disabled></key>         <true/>
-<% end %>
+<% end -%>
     <key>RunAtLoad</key>         <true/>
     <key>KeepAlive</key>         <true/>
     <key>ProgramArguments</key>
         <array>
-            <string><%= scope.lookupvar('vault::bin_dir') %>/vault</string>
-            <string>server</string>
-            <string>-config</string>
-            <string><%= scope.lookupvar('vault::config_dir') %></string>
-<% for extra_option in scope.lookupvar('vault::extra_options') -%>
-            <string><%= extra_option.encode(:xml => :text) %></string>
-<% end %>
+<% for arg in @command -%>
+            <string><%= arg.encode(:xml => :text) %></string>
+<% end -%>
         </array>
 </dict>
 </plist>

@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe 'initscript' do
   let(:title) { "initscriptname" }
-  let(:launchd_name) { "com.initscriptlaunchdname" }
-  
+
   context 'Should compile with just command argument and operatingsystem fact' do
     let(:facts) {{
       :operatingsystem => 'Ubuntu',
@@ -34,7 +33,7 @@ describe 'initscript' do
       :command    => ['foo', 'bar', 'baz <baz> baz'],
       :init_style => 'sysv_sles',
     }}
-    it { should contain_file('/etc/init.d/initscriptname').with_content(%r{^\s+foo bar "baz <baz> baz"})}
+    it { should contain_file('/etc/init.d/initscriptname').with_content(%r{^\s+startproc foo bar baz\\ \\<baz\\>\\ baz})}
   end
 
   context 'properly escaped shellwords systemd' do
@@ -42,13 +41,14 @@ describe 'initscript' do
       :command    => ['foo', 'bar', 'baz <baz> baz'],
       :init_style => 'systemd',
     }}
-    it { should contain_file('/etc/init.d/initscriptname').with_content(%r{^\s+foo bar "baz <baz> baz"})}
+    it { should contain_file('/lib/systemd/system/initscriptname.service').with_content(%r{^ExecStart=foo bar baz\\ \\<baz\\>\\ baz})}
   end
 
   context 'properly escaped xml launchd' do
     let(:params) {{
-      :command    => ['foo', 'bar', 'baz <baz> baz'],
-      :init_style => 'launchd',
+      :command      => ['foo', 'bar', 'baz <baz> baz'],
+      :init_style   => 'launchd',
+      :launchd_name => "com.initscriptlaunchdname"
     }}
     it {
       should contain_file('/Library/LaunchDaemons/com.initscriptlaunchdname.daemon.plist') \
@@ -61,14 +61,14 @@ describe 'initscript' do
       :command    => ['foo', 'bar', 'baz <baz> baz'],
       :init_style => 'sysv_redhat',
     }}
-    it { should contain_file('/etc/init.d/initscriptname').with_content(%r{^\s+foo bar "baz <baz> baz"})}
+    it { should contain_file('/etc/init.d/initscriptname').with_content(%r{^\s+foo bar baz\\ \\<baz\\>\\ baz})}
   end
 
   context 'properly escaped shellwords upstart' do
     let(:params) {{
-      :command    => ['foo', 'bar', 'baz baz baz'],
+      :command    => ['foo', 'bar', 'baz <baz> baz'],
       :init_style => 'upstart',
     }}
-    it { should contain_file('/etc/init.d/initscriptname').with_content(%r{^\s+foo bar "baz <baz> baz"})}
+    it { should contain_file('/etc/init/initscriptname.conf').with_content(%r{^script\n\s+foo bar baz\\ \\<baz\\>\\ baz\nend script\n})}
   end
 end
