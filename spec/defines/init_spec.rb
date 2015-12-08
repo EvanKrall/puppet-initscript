@@ -71,4 +71,13 @@ describe 'initscript' do
     }}
     it { should contain_file('/etc/init/initscriptname.conf').with_content(%r{^script\n\s+foo bar baz\\ \\<baz\\>\\ baz\nend script\n})}
   end
+
+  context 'upstart omits description directive when description is empty' do
+    let(:params) {{
+      :command     => ['foo', 'bar', 'baz <baz> baz'],
+      :init_style  => 'upstart',
+      :description => '',
+    }}
+    it { should contain_file('/etc/init/initscriptname.conf').without_content(%r{^\s*description})}
+  end
 end

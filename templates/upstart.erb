@@ -1,5 +1,5 @@
 # <% @description %> (Upstart unit)
-<% if @description -%>
+<% if @description and @description != '' -%>
 description "<% @description %>"
 <% end -%>
 start on (local-filesystems and net-device-up IFACE!=lo)
