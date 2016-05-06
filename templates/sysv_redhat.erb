@@ -35,7 +35,7 @@ KILLPROC_OPT=(-p "${PID_FILE}")
 mkpidfile() {
         # Create PID file if it didn't exist
         mkrundir
-        [ ! -f "$PID_FILE" ] && pidofproc "COMMAND_NAME" > "$PID_FILE"
+        [ ! -f "$PID_FILE" ] && pidofproc "$COMMAND_NAME" > "$PID_FILE"
         chown <%= @user.shellescape %> /var/run/<%= @name.shellescape %>
         if [ $? -ne 0 ] ; then
             rm "$PID_FILE"
@@ -58,7 +58,7 @@ start() {
 stop() {
         echo -n "Stopping "<%= @name.shellescape %>": "
         mkpidfile
-        killproc "${KILLPROC_OPT[@]}" "COMMAND_NAME" -9
+        killproc "${KILLPROC_OPT[@]}" "$COMMAND_NAME" -9
 
         retcode=$?
         rm -f /var/lock/subsys/<%= @name.shellescape %> "$PID_FILE"
@@ -81,7 +81,7 @@ case "$1" in
         ;;
     reload)
         mkpidfile
-        killproc "${KILLPROC_OPT[@]}" "COMMAND_NAME" -HUP
+        killproc "${KILLPROC_OPT[@]}" "$COMMAND_NAME" -HUP
         ;;
     condrestart)
         [ -f /var/lock/subsys/<%= @name.shellescape %> ] && restart || :
