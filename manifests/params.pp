@@ -2,8 +2,10 @@ class initscript::params {
   if $::operatingsystem == 'Ubuntu' {
     if versioncmp($::lsbdistrelease, '8.04') < 1 {
       $init_style = 'sysv_debian'
-    } else {
+    } elsif versioncmp($::lsbdistrelease, '14.10') < 1 {
       $init_style = 'upstart'
+    } else {
+      $init_style = 'systemd'
     }
   } elsif $::operatingsystem =~ /Scientific|CentOS|RedHat|OracleLinux/ {
     if versioncmp($::operatingsystemrelease, '7.0') < 0 {
