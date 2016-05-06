@@ -19,7 +19,7 @@ describe 'initscript' do
       :init_style => 'sysv_debian',
     }}
     it {
-      should contain_file('/etc/init.d/initscriptname') \
+      should contain_file('initscript initscriptname').with_path('/etc/init.d/initscriptname') \
         .with_content(%r{^DAEMON=foo}) \
         .with_content(%r{^NAME=initscriptname$}) \
         .with_content(%r{^DAEMON_ARGS=\( bar baz\\ \\<baz\\>\\ baz \)$}) \
@@ -33,7 +33,11 @@ describe 'initscript' do
       :command    => ['foo', 'bar', 'baz <baz> baz'],
       :init_style => 'sysv_sles',
     }}
-    it { should contain_file('/etc/init.d/initscriptname').with_content(%r{^\s+startproc foo bar baz\\ \\<baz\\>\\ baz})}
+    it {
+      should contain_file('initscript initscriptname') \
+        .with_path('/etc/init.d/initscriptname') \
+        .with_content(%r{^\s+startproc foo bar baz\\ \\<baz\\>\\ baz}) \
+    }
   end
 
   context 'properly escaped shellwords systemd' do
@@ -41,7 +45,11 @@ describe 'initscript' do
       :command    => ['foo', 'bar', 'baz <baz> baz'],
       :init_style => 'systemd',
     }}
-    it { should contain_file('/lib/systemd/system/initscriptname.service').with_content(%r{^ExecStart=foo bar baz\\ \\<baz\\>\\ baz})}
+    it {
+      should contain_file('initscript initscriptname') \
+        .with_path('/lib/systemd/system/initscriptname.service') \
+        .with_content(%r{^ExecStart=foo bar baz\\ \\<baz\\>\\ baz}) \
+    }
   end
 
   context 'properly escaped xml launchd' do
@@ -51,8 +59,9 @@ describe 'initscript' do
       :launchd_name => "com.initscriptlaunchdname"
     }}
     it {
-      should contain_file('/Library/LaunchDaemons/com.initscriptlaunchdname.daemon.plist') \
-        .with_content(%r{<string>foo</string>\n\s*<string>bar</string>\n\s*<string>baz &lt;baz&gt; baz</string>})
+      should contain_file('initscript initscriptname') \
+        .with_path('/Library/LaunchDaemons/com.initscriptlaunchdname.daemon.plist') \
+        .with_content(%r{<string>foo</string>\n\s*<string>bar</string>\n\s*<string>baz &lt;baz&gt; baz</string>}) \
     }
   end
 
@@ -61,7 +70,11 @@ describe 'initscript' do
       :command    => ['foo', 'bar', 'baz <baz> baz'],
       :init_style => 'sysv_redhat',
     }}
-    it { should contain_file('/etc/init.d/initscriptname').with_content(%r{^\s+foo bar baz\\ \\<baz\\>\\ baz})}
+    it {
+      should contain_file('initscript initscriptname') \
+        .with_path('/etc/init.d/initscriptname') \
+        .with_content(%r{^\s+foo bar baz\\ \\<baz\\>\\ baz}) \
+    }
   end
   context 'sysv_redhat sources /etc/sysconfig/initscriptname' do
     let(:params) {{
@@ -69,7 +82,11 @@ describe 'initscript' do
       :init_style => 'sysv_redhat',
       :source_default_file => true,
     }}
-    it { should contain_file('/etc/init.d/initscriptname').with_content(%r{\n\[ -e /etc/sysconfig/initscriptname \] && . /etc/sysconfig/initscriptname\n})}
+    it {
+      should contain_file('initscript initscriptname') \
+        .with_path('/etc/init.d/initscriptname') \
+        .with_content(%r{\n\[ -e /etc/sysconfig/initscriptname \] && . /etc/sysconfig/initscriptname\n}) \
+    }
   end
 
 
@@ -78,7 +95,11 @@ describe 'initscript' do
       :command    => ['foo', 'bar', 'baz <baz> baz'],
       :init_style => 'upstart',
     }}
-    it { should contain_file('/etc/init/initscriptname.conf').with_content(%r{^script\n\s+foo bar baz\\ \\<baz\\>\\ baz\nend script\n})}
+    it {
+      should contain_file('initscript initscriptname') \
+        .with_path('/etc/init/initscriptname.conf') \
+        .with_content(%r{^script\n\s+foo bar baz\\ \\<baz\\>\\ baz\nend script\n}) \
+    }
   end
 
   context 'upstart sources /etc/default/initscriptname' do
@@ -87,7 +108,11 @@ describe 'initscript' do
       :init_style => 'upstart',
       :source_default_file => true,
     }}
-    it { should contain_file('/etc/init/initscriptname.conf').with_content(%r{^script\n\s+\[ -f /etc/default/initscriptname \] && . /etc/default/initscriptname\n\s+foo bar\nend script\n})}
+    it {
+      should contain_file('initscript initscriptname') \
+        .with_path('/etc/init/initscriptname.conf')
+        .with_content(%r{^script\n\s+\[ -f /etc/default/initscriptname \] && . /etc/default/initscriptname\n\s+foo bar\nend script\n}) \
+    }
   end
 
   context 'upstart omits description directive when description is empty' do
@@ -96,6 +121,10 @@ describe 'initscript' do
       :init_style  => 'upstart',
       :description => '',
     }}
-    it { should contain_file('/etc/init/initscriptname.conf').without_content(%r{^\s*description})}
+    it {
+      should contain_file('initscript initscriptname') \
+        .with_path('/etc/init/initscriptname.conf') \
+        .without_content(%r{^\s*description}) \
+    }
   end
 end

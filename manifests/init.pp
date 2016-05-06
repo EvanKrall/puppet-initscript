@@ -89,7 +89,8 @@ define initscript(
 
   case $real_init_style {
     'upstart' : {
-      file { "/etc/init/${name}.conf":
+      file { "initscript ${name}":
+        path    => "/etc/init/${name}.conf",
         mode    => '0444',
         owner   => 'root',
         group   => 'root',
@@ -104,7 +105,8 @@ define initscript(
       }
     }
     'systemd' : {
-      file { "/lib/systemd/system/${name}.service":
+      file { "initscript ${name}":
+        path    => "/lib/systemd/system/${name}.service",
         mode    => '0644',
         owner   => 'root',
         group   => 'root',
@@ -112,7 +114,8 @@ define initscript(
       }
     }
     'sysv_redhat' : {
-      file { "/etc/init.d/${name}":
+      file { "initscript ${name}":
+        path    => "/etc/init.d/${name}",
         mode    => '0555',
         owner   => 'root',
         group   => 'root',
@@ -120,7 +123,8 @@ define initscript(
       }
     }
     'sysv_debian' : {
-      file { "/etc/init.d/${name}":
+      file { "initscript ${name}":
+        path    => "/etc/init.d/${name}",
         mode    => '0555',
         owner   => 'root',
         group   => 'root',
@@ -128,7 +132,8 @@ define initscript(
       }
     }
     'sysv_sles' : {
-      file { "/etc/init.d/${name}":
+      file { "initscript ${name}":
+        path    => "/etc/init.d/${name}",
         mode    => '0555',
         owner   => 'root',
         group   => 'root',
@@ -137,7 +142,8 @@ define initscript(
     }
     'launchd' : {
       validate_string($launchd_name)
-      file { "/Library/LaunchDaemons/${launchd_name}.daemon.plist":
+      file { "initscript ${name}":
+        path    => "/Library/LaunchDaemons/${launchd_name}.daemon.plist",
         mode    => '0644',
         owner   => 'root',
         group   => 'wheel',
@@ -155,6 +161,7 @@ define initscript(
   }
 
   if $manage_service {
+    File["initscript ${name}"] ->
     service { $name:
       ensure => $service_ensure,
       name   => $init_selector,
