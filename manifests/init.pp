@@ -11,11 +11,11 @@
 # [*manage_service*]
 #   Whether this module should manage a corresponding Service resource for
 #   this init script.
-# 
+#
 # [*service_ensure*]
 #   If $manage_service is set, this is passed as `ensure` to the service
 #   resource.
-# 
+#
 # [*service_enable*]
 #   If $manage_service is set, this is passed as `enable` to the service
 #   resource.
@@ -40,7 +40,7 @@
 # [*init_style*]
 #   Usually you can leave this un-set and it will be auto-detected, but if you
 #   want to override the type of init script, set this.
-# 
+#
 define initscript(
   $command,
   $manage_service = true,
@@ -54,6 +54,8 @@ define initscript(
   $description = '',
   $short_description = '',
   $init_style = undef,
+  $source_default_file = false,
+  $defaults_file_path = "/etc/default/${name}",
 ) {
   validate_array($command)
 
@@ -63,6 +65,10 @@ define initscript(
     $real_init_style = $::initscript::params::init_style
   } else {
     $real_init_style = $init_style
+  }
+
+  if $source_default_file and $real_init_style != 'upstart' {
+    fail("source_default_file=true not supported on init style ${real_init_style}")
   }
 
   case $real_init_style {

@@ -10,6 +10,7 @@ env USER=<%= @user.shellescape %>
 env GROUP=<%= @group.shellescape %>
 
 script
+	<% if @source_default_file %>[ -f <%= @defaults_file_path.shellescape %> ] && . <%= @defaults_file_path.shellescape %><% end %>
     <%= @command.shelljoin %>
 end script
 
