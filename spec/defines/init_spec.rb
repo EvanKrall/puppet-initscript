@@ -63,6 +63,15 @@ describe 'initscript' do
     }}
     it { should contain_file('/etc/init.d/initscriptname').with_content(%r{^\s+foo bar baz\\ \\<baz\\>\\ baz})}
   end
+  context 'sysv_redhat sources /etc/sysconfig/initscriptname' do
+    let(:params) {{
+      :command => ['foo', 'bar'],
+      :init_style => 'sysv_redhat',
+      :source_default_file => true,
+    }}
+    it { should contain_file('/etc/init.d/initscriptname').with_content(%r{\n\[ -e /etc/sysconfig/initscriptname \] && . /etc/sysconfig/initscriptname\n})}
+  end
+
 
   context 'properly escaped shellwords upstart' do
     let(:params) {{

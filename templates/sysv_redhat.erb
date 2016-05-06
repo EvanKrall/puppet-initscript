@@ -15,9 +15,7 @@
 
 PID_FILE=/var/run/<%= @name.shellescape %>/pidfile
 
-[ -e /etc/sysconfig/<%= @name %> ] && . /etc/sysconfig/<%= @name %>
-
-export GOMAXPROCS="${GOMAXPROCS:-2}"
+<% if @source_default_file %>[ -e <%= @real_default_file_path.shellescape %> ] && . <%= @real_default_file_path.shellescape %><% end %>
 
 #
 # Create the /var/run/<%= @name.shellescape %> directory, which can live on a tmpfs

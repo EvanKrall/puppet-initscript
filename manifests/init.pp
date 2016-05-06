@@ -55,7 +55,7 @@ define initscript(
   $short_description = '',
   $init_style = undef,
   $source_default_file = false,
-  $defaults_file_path = "/etc/default/${name}",
+  $default_file_path = undef,
 ) {
   validate_array($command)
 
@@ -67,8 +67,24 @@ define initscript(
     $real_init_style = $init_style
   }
 
-  if $source_default_file and $real_init_style != 'upstart' {
-    fail("source_default_file=true not supported on init style ${real_init_style}")
+  if $default_file_path == undef {
+    case $real_init_style {
+      'sysv_redhat' : {
+        $real_default_file_path = "/etc/sysconfig/${name}"
+      }
+      default : {
+        $real_default_file_path = "/etc/default/${name}"
+      }
+    }
+  } else {
+    $real_default_file_path = $default_file_path
+  }
+
+  if $source_default_file {
+    case $real_init_style {
+      'upstart', 'sysv_redhat' : {}
+      default : { fail("source_default_file=true not supported on init style ${real_init_style}") }
+    }
   }
 
   case $real_init_style {
