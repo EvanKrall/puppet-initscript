@@ -14,7 +14,9 @@ setgid <%= @group %>
 <% end -%>
 
 script
-    <% if @source_default_file %>[ -f <%= @real_default_file_path.shellescape %> ] && . <%= @real_default_file_path.shellescape %><% end -%>
+<% if @source_default_file %>
+    [ -f <%= @real_default_file_path.shellescape %> ] && . <%= @real_default_file_path.shellescape %>
+<% end -%>
     exec <%= @command.shelljoin %>
 end script
 

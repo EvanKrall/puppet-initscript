@@ -23,7 +23,7 @@ PID_FILE=/var/run/<%= @name.shellescape %>/pidfile
 #
 mkrundir() {
         [ ! -d /var/run/<%= @name.shellescape %> ] && mkdir -p /var/run/<%= @name.shellescape %>
-<% unless user.nil? -%>
+<% unless @user.nil? -%>
         chown <%= @user.shellescape %> /var/run/<%= @name.shellescape %>
 <% end -%>
 }
