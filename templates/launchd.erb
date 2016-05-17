@@ -3,8 +3,12 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>             <string><%= @launchd_name %></string>
+<% unless @user.nil? %>
     <key>UserName</key>          <string><%= @user %></string>
+<% end %>
+<% unless @group.nil? %>
     <key>GroupName</key>         <string><%= @group %></string>
+<% end %>
 <% if @service_enable -%>
     <key>Disabled</key>          <false/>
 <% else -%>

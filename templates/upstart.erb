@@ -6,12 +6,16 @@ start on (local-filesystems and net-device-up IFACE!=lo)
 stop on runlevel [06]
 
 <% require 'shellwords' %>
-env USER=<%= @user.shellescape %>
-env GROUP=<%= @group.shellescape %>
+<% unless @user.nil? %>
+setuid <%= @user %>
+<% end -%>
+<% unless @group.nil? %>
+setgid <%= @group %>
+<% end -%>
 
 script
-	<% if @source_default_file %>[ -f <%= @real_default_file_path.shellescape %> ] && . <%= @real_default_file_path.shellescape %><% end %>
-    <%= @command.shelljoin %>
+    <% if @source_default_file %>[ -f <%= @real_default_file_path.shellescape %> ] && . <%= @real_default_file_path.shellescape %><% end -%>
+    exec <%= @command.shelljoin %>
 end script
 
 respawn

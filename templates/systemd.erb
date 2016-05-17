@@ -5,8 +5,12 @@ After=basic.target network.target
 
 [Service]
 <% require 'shellwords' %>
+<% unless @user.nil? %>
 User=<%= @user %>
+<% end %>
+<% unless @group.nil? %>
 Group=<%= @group %>
+<% end %>
 ExecStart=<%= @command.shelljoin %>
 <% if @reload_command -%>
 ExecReload=<%= @reload_command.shelljoin %>
