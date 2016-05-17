@@ -23,7 +23,9 @@ PID_FILE=/var/run/<%= @name.shellescape %>/pidfile
 #
 mkrundir() {
         [ ! -d /var/run/<%= @name.shellescape %> ] && mkdir -p /var/run/<%= @name.shellescape %>
+<% unless user.nil? -%>
         chown <%= @user.shellescape %> /var/run/<%= @name.shellescape %>
+<% end -%>
 }
 
 #
@@ -36,7 +38,9 @@ mkpidfile() {
         # Create PID file if it didn't exist
         mkrundir
         [ ! -f "$PID_FILE" ] && pidofproc "$COMMAND_NAME" > "$PID_FILE"
+<% unless user.nil? -%>
         chown <%= @user.shellescape %> /var/run/<%= @name.shellescape %>
+<% end -%>
         if [ $? -ne 0 ] ; then
             rm "$PID_FILE"
             KILLPROC_OPT=()
@@ -47,7 +51,7 @@ start() {
         echo -n "Starting "<%= @name.shellescape %>": "
         mkrundir
         [ -f "$PID_FILE" ] && rm "$PID_FILE"
-        daemon --user=<%= @user.shellescape %> \
+        daemon <% unless user.nil? %>--user=<%= @user.shellescape %><% end %> \
             --pidfile="$PID_FILE" \
             <%= @command.shelljoin %> &
         retcode=$?
