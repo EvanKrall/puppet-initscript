@@ -61,7 +61,7 @@ do_start()
       --make-pidfile --test > /dev/null \
         || return 1
     start-stop-daemon --start --quiet --pidfile "$PIDFILE" --exec "$DAEMON" \
-      <% unless @user.nil %>--chuid <%= @user.shellescape %><% end %> --background \
+      <% unless @user.nil? %>--chuid <%= @user.shellescape %><% end %> --background \
       --make-pidfile -- "${DAEMON_ARGS[@]}" \
         || return 2
 }

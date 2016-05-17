@@ -38,7 +38,7 @@ mkpidfile() {
         # Create PID file if it didn't exist
         mkrundir
         [ ! -f "$PID_FILE" ] && pidofproc "$COMMAND_NAME" > "$PID_FILE"
-<% unless user.nil? -%>
+<% unless @user.nil? -%>
         chown <%= @user.shellescape %> /var/run/<%= @name.shellescape %>
 <% end -%>
         if [ $? -ne 0 ] ; then
