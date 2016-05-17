@@ -51,7 +51,7 @@ start() {
         echo -n "Starting "<%= @name.shellescape %>": "
         mkrundir
         [ -f "$PID_FILE" ] && rm "$PID_FILE"
-        daemon <% unless user.nil? %>--user=<%= @user.shellescape %><% end %> \
+        daemon <% unless @user.nil? %>--user=<%= @user.shellescape %><% end %> \
             --pidfile="$PID_FILE" \
             <%= @command.shelljoin %> &
         retcode=$?

@@ -23,8 +23,6 @@ describe 'initscript' do
         .with_content(%r{^DAEMON=foo}) \
         .with_content(%r{^NAME=initscriptname$}) \
         .with_content(%r{^DAEMON_ARGS=\( bar baz\\ \\<baz\\>\\ baz \)$}) \
-        .with_content(%r{^USER=root$}) \
-        .with_content(%r{^GROUP=root$}) \
     }
   end
 
