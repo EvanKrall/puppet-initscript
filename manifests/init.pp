@@ -44,8 +44,8 @@
 define initscript(
   $command,
   $manage_service = true,
-  $user = 'root',
-  $group = 'root',
+  $user = undef,
+  $group = undef,
   $service_ensure = 'running',
   $service_enable = true,
   $has_reload = true,

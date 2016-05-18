@@ -23,8 +23,6 @@ describe 'initscript' do
         .with_content(%r{^DAEMON=foo}) \
         .with_content(%r{^NAME=initscriptname$}) \
         .with_content(%r{^DAEMON_ARGS=\( bar baz\\ \\<baz\\>\\ baz \)$}) \
-        .with_content(%r{^USER=root$}) \
-        .with_content(%r{^GROUP=root$}) \
     }
   end
 
@@ -98,7 +96,7 @@ describe 'initscript' do
     it {
       should contain_file('initscript initscriptname') \
         .with_path('/etc/init/initscriptname.conf') \
-        .with_content(%r{^script\n\s+foo bar baz\\ \\<baz\\>\\ baz\nend script\n}) \
+        .with_content(%r{^script\n\s+exec foo bar baz\\ \\<baz\\>\\ baz\nend script\n}) \
     }
   end
 
@@ -111,7 +109,7 @@ describe 'initscript' do
     it {
       should contain_file('initscript initscriptname') \
         .with_path('/etc/init/initscriptname.conf')
-        .with_content(%r{^script\n\s+\[ -f /etc/default/initscriptname \] && . /etc/default/initscriptname\n\s+foo bar\nend script\n}) \
+        .with_content(%r{^script\n\s+\[ -f /etc/default/initscriptname \] && . /etc/default/initscriptname\n\s+exec foo bar\nend script\n}) \
     }
   end
 
