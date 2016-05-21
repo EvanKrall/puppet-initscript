@@ -41,6 +41,19 @@
 #   Usually you can leave this un-set and it will be auto-detected, but if you
 #   want to override the type of init script, set this.
 #
+# [*before_command*]
+#   An array of arrays, specifying commands to run preparatory to *command*.
+#   These preparatory commands will typically be run as init's user, not as *user*.
+#
+#     [
+#       ['commandA', 'arg1', 'arg2'],
+#       ['commandB', 'arg1', 'arg2'],
+#     ]
+#
+# [*ulimit*]
+#   A hash of key-value pairs specifying hard ulimits that should be applied to
+#   the process. Popular keys include `core` and `nofile`.
+#
 define initscript(
   $command,
   $manage_service = true,
