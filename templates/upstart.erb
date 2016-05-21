@@ -9,13 +9,15 @@ stop on runlevel [06]
 <% @ulimit.each do |k, v| -%>
 limit <%= k %> <%= v %>
 <% end -%>
-respawn
 <% unless @user.nil? -%>
 setuid <%= @user %>
 <% end -%>
 <% unless @group.nil? -%>
 setgid <%= @group %>
 <% end -%>
+respawn
+respawn limit 10 10
+kill timeout 10
 
 <% unless @before_command.empty? -%>
 pre-start script
@@ -27,11 +29,7 @@ end script
 
 script
 <% if @source_default_file %>
-    [ -f <%= @real_default_file_path.shellescape %> ] && . <%= @real_default_file_path.shellescape %>
+  [ -f <%= @real_default_file_path.shellescape %> ] && . <%= @real_default_file_path.shellescape %>
 <% end -%>
-    exec <%= @command.shelljoin %>
+  exec <%= @command.shelljoin %>
 end script
-
-respawn
-respawn limit 10 10
-kill timeout 10
