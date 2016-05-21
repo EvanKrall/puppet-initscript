@@ -170,7 +170,7 @@ describe 'initscript' do
     }}
     it {
       should contain_file('initscript initscriptname') \
-        .with_content(%r{^limit nofile 1\nlimit rss 2$})
+        .with_content(%r{^limit nofile 1 1\nlimit rss 2 2$})
     }
   end
 
