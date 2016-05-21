@@ -164,7 +164,9 @@ define initscript(
   }
 
   if $manage_service {
-    File["initscript ${name}"] ->
+    #TODO: maybe make the choice of whether to reload the service
+    # configurable.
+    File["initscript ${name}"] ~>
     service { $name:
       ensure => $service_ensure,
       name   => $init_selector,
