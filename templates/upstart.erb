@@ -7,7 +7,7 @@ start on (local-filesystems and net-device-up IFACE!=lo)
 stop on runlevel [06]
 
 <% @ulimit.each do |k, v| -%>
-limit <%= k %> <%= v %>
+limit <%= k %> <%= v %> <%= v %>
 <% end -%>
 <% unless @user.nil? -%>
 setuid <%= @user %>
