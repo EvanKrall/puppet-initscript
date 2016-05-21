@@ -56,8 +56,11 @@ define initscript(
   $init_style = undef,
   $source_default_file = false,
   $default_file_path = undef,
+  $before_command = [],
+  $ulimit = {}
 ) {
   validate_array($command)
+  validate_array($before_command)
 
   include initscript::params
 

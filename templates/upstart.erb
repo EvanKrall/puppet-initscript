@@ -1,3 +1,4 @@
+<% require 'shellwords' -%>
 # <% @description %> (Upstart unit)
 <% if @description and @description != '' -%>
 description "<% @description %>"
@@ -5,12 +6,23 @@ description "<% @description %>"
 start on (local-filesystems and net-device-up IFACE!=lo)
 stop on runlevel [06]
 
-<% require 'shellwords' %>
-<% unless @user.nil? %>
+<% @ulimit.each do |k, v| -%>
+limit <%= k %> <%= v %>
+<% end -%>
+respawn
+<% unless @user.nil? -%>
 setuid <%= @user %>
 <% end -%>
-<% unless @group.nil? %>
+<% unless @group.nil? -%>
 setgid <%= @group %>
+<% end -%>
+
+<% unless @before_command.empty? -%>
+pre-start script
+<% @before_command.each do |c| -%>
+  <%= c.shelljoin %>
+<% end -%>
+end script
 <% end -%>
 
 script
