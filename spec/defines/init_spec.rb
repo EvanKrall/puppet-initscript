@@ -196,4 +196,18 @@ describe 'initscript' do
         .with_content(%r{^LimitNOFILE=1\nLimitRSS=2$})
     }
   end
+
+  context 'sysv_debian does ulimits' do
+    let(:params) {{
+      :command        => ['foo', 'bar'],
+      :init_style     => 'sysv_debian',
+      :ulimit         => { 'nofile'=> '1', 'rss'=>'2' },
+    }}
+    it {
+      should contain_file('initscript initscriptname') \
+        .with_content(%r{^    ulimit -H -n 1\n    ulimit -S -n 1$})
+        .with_content(%r{^    ulimit -H -m 2\n    ulimit -S -m 2$})
+    }
+  end
+
 end

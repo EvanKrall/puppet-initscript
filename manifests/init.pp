@@ -76,6 +76,7 @@ define initscript(
   validate_array($before_command)
 
   include initscript::params
+  $ulimit_switches = $::initscript::params::ulimit_switches
 
   if $init_style == undef {
     $real_init_style = $::initscript::params::init_style
