@@ -150,8 +150,7 @@ describe 'initscript' do
     }
   end
 
-
-  context 'upstart forms pre-start script' do
+  context 'upstart does not have pre-start script' do
     let(:params) {{
       :command        => ['foo', 'bar'],
       :init_style     => 'upstart',
@@ -159,6 +158,18 @@ describe 'initscript' do
     it {
       should contain_file('initscript initscriptname') \
         .without_content("pre-start script")
+    }
+  end
+
+  context 'sysv_debian forms pre-start script' do
+    let(:params) {{
+      :command        => ['foo', 'bar'],
+      :init_style     => 'sysv_debian',
+      :before_command => [['baz', 'qux'], ['spam', 'eggs']],
+    }}
+    it {
+      should contain_file('initscript initscriptname') \
+        .with_content(%r{^    baz qux\n    spam eggs\n    start-stop-daemon })
     }
   end
 

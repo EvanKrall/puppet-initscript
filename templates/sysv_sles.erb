@@ -29,7 +29,10 @@ export GOMAXPROCS="${GOMAXPROCS:-2}"
 
 case "$1" in
     start)
-        echo -n "Starting "<%= @name.shellescape %>
+	echo -n "Starting "<%= @name.shellescape %>
+<% @before_command.each do |c| -%>
+	<%= c.shelljoin %>
+<% end -%>
         ## Start daemon with startproc(8). If this fails
         ## the return value is set appropriately by startproc.
         startproc <%= @command.shelljoin %>
