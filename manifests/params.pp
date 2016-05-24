@@ -30,4 +30,22 @@ class initscript::params {
   } else {
     $init_style = undef
   }
+
+  $ulimit_switches = {
+    'as'         => 'v',
+    'core'       => 'c',
+    'cpu'        => 't',
+    'data'       => 'd',
+    'fsize'      => 'f',
+    'locks'      => 'x',
+    'memlock'    => 'l',
+    'msgqueue'   => 'q',
+    'nproc'      => 'u',
+    'nofile'     => 'n',
+    'nice'       => 'e',
+    'rtprio'     => 'r',
+    'rss'        => 'm',
+    'sigpending' => 'i',
+    'stack'      => 's',
+  }
 }

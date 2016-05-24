@@ -1,16 +1,22 @@
+<% require 'shellwords' -%>
 [Unit]
 Description=<%= @description %>
 Wants=basic.target
 After=basic.target network.target
 
 [Service]
-<% require 'shellwords' %>
-<% unless @user.nil? %>
+<% @ulimit.each do |k, v| -%>
+Limit<%= k.upcase %>=<%= v %>
+<% end -%>
+<% unless @user.nil? -%>
 User=<%= @user %>
-<% end %>
-<% unless @group.nil? %>
+<% end -%>
+<% unless @group.nil? -%>
 Group=<%= @group %>
-<% end %>
+<% end -%>
+<% @before_command.each do |c| -%>
+ExecStartPre=<%= c.shelljoin %>
+<% end -%>
 ExecStart=<%= @command.shelljoin %>
 <% if @reload_command -%>
 ExecReload=<%= @reload_command.shelljoin %>

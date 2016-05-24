@@ -30,6 +30,13 @@ export GOMAXPROCS="${GOMAXPROCS:-2}"
 case "$1" in
     start)
         echo -n "Starting "<%= @name.shellescape %>
+<% @ulimit.each do |k, v| -%>
+        ulimit -H -<%= @ulimit_switches[k] %> <%= v %>
+        ulimit -S -<%= @ulimit_switches[k] %> <%= v %>
+<% end -%>
+<% @before_command.each do |c| -%>
+        <%= c.shelljoin %>
+<% end -%>
         ## Start daemon with startproc(8). If this fails
         ## the return value is set appropriately by startproc.
         startproc <%= @command.shelljoin %>

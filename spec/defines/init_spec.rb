@@ -125,4 +125,89 @@ describe 'initscript' do
         .without_content(%r{^\s*description}) \
     }
   end
+
+  context 'upstart forms pre-start script' do
+    let(:params) {{
+      :command        => ['foo', 'bar'],
+      :init_style     => 'upstart',
+      :before_command => [['baz', 'qux'], ['spam', 'eggs']],
+    }}
+    it {
+      should contain_file('initscript initscriptname') \
+        .with_content(%r{^pre-start script\n  baz qux\n  spam eggs\nend script$})
+    }
+  end
+
+  context 'systemd has ExecStartPre' do
+    let(:params) {{
+      :command        => ['foo', 'bar'],
+      :init_style     => 'systemd',
+      :before_command => [['baz', 'qux'], ['spam', 'eggs']],
+    }}
+    it {
+      should contain_file('initscript initscriptname') \
+        .with_content(%r{^ExecStartPre=baz qux\nExecStartPre=spam eggs$})
+    }
+  end
+
+  context 'upstart does not have pre-start script' do
+    let(:params) {{
+      :command        => ['foo', 'bar'],
+      :init_style     => 'upstart',
+    }}
+    it {
+      should contain_file('initscript initscriptname') \
+        .without_content("pre-start script")
+    }
+  end
+
+  context 'sysv_debian forms pre-start script' do
+    let(:params) {{
+      :command        => ['foo', 'bar'],
+      :init_style     => 'sysv_debian',
+      :before_command => [['baz', 'qux'], ['spam', 'eggs']],
+    }}
+    it {
+      should contain_file('initscript initscriptname') \
+        .with_content(%r{^    baz qux\n    spam eggs\n    start-stop-daemon })
+    }
+  end
+
+  context 'upstart does ulimits' do
+    let(:params) {{
+      :command        => ['foo', 'bar'],
+      :init_style     => 'upstart',
+      :ulimit         => { 'nofile'=> '1', 'rss'=>'2' },
+    }}
+    it {
+      should contain_file('initscript initscriptname') \
+        .with_content(%r{^limit nofile 1 1\nlimit rss 2 2$})
+    }
+  end
+
+  context 'systemd does ulimits' do
+    let(:params) {{
+      :command        => ['foo', 'bar'],
+      :init_style     => 'systemd',
+      :ulimit         => { 'nofile'=> '1', 'rss'=>'2' },
+    }}
+    it {
+      should contain_file('initscript initscriptname') \
+        .with_content(%r{^LimitNOFILE=1\nLimitRSS=2$})
+    }
+  end
+
+  context 'sysv_debian does ulimits' do
+    let(:params) {{
+      :command        => ['foo', 'bar'],
+      :init_style     => 'sysv_debian',
+      :ulimit         => { 'nofile'=> '1', 'rss'=>'2' },
+    }}
+    it {
+      should contain_file('initscript initscriptname') \
+        .with_content(%r{^    ulimit -H -n 1\n    ulimit -S -n 1$})
+        .with_content(%r{^    ulimit -H -m 2\n    ulimit -S -m 2$})
+    }
+  end
+
 end
