@@ -177,6 +177,21 @@ define initscript(
     default   => $name,
   }
 
+  $start = $::initscript::params::start ? {
+    undef   => undef,
+    default => sprintf($::initscript::params::start, $name),
+  }
+
+  $stop = $::initscript::params::stop ? {
+    undef   => undef,
+    default => sprintf($::initscript::params::stop, $name),
+  }
+
+  $status = $::initscript::params::status ? {
+    undef   => undef,
+    default => sprintf($::initscript::params::status, $name),
+  }
+
   if $manage_service {
     #TODO: maybe make the choice of whether to reload the service
     # configurable.
@@ -185,9 +200,9 @@ define initscript(
       ensure  => $service_ensure,
       name    => $init_selector,
       enable  => $service_enable,
-      start   => sprintf($::initscript::params::start, $name),
-      stop    => sprintf($::initscript::params::stop, $name),
-      status  => sprintf($::initscript::params::status, $name),
+      start   => $start,
+      stop    => $stop,
+      status  => $status,
     }
   }
 }
