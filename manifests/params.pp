@@ -8,10 +8,13 @@ class initscript::params {
       $init_style = 'systemd'
     }
   } elsif $::operatingsystem =~ /Scientific|CentOS|RedHat|OracleLinux/ {
-    if versioncmp($::operatingsystemrelease, '7.0') < 0 {
+    if versioncmp($::operatingsystemrelease, '6.0') < 0 {
       $init_style = 'sysv_redhat'
+    } elsif versioncmp($operatingsystemrelease, '7.0') < 0 {
+      $init_style = 'upstart'
+      $is_centos_upstart = true
     } else {
-      $init_style  = 'systemd'
+      $init_style = 'systemd'
     }
   } elsif $::operatingsystem == 'Fedora' {
     if versioncmp($::operatingsystemrelease, '12') < 0 {
@@ -29,6 +32,16 @@ class initscript::params {
     $init_style = 'sysv_redhat'
   } else {
     $init_style = undef
+  }
+
+  if getvar('is_centos_upstart') {
+    $start = "initctl start '%s'"
+    $stop = "initctl stop '%s'"
+    $status = "initctl status '%s' | grep -q '/running'"
+  } else {
+    $start = undef
+    $stop = undef
+    $status = undef
   }
 
   $ulimit_switches = {

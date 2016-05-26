@@ -182,9 +182,12 @@ define initscript(
     # configurable.
     File["initscript ${name}"] ~>
     service { $name:
-      ensure => $service_ensure,
-      name   => $init_selector,
-      enable => $service_enable,
+      ensure  => $service_ensure,
+      name    => $init_selector,
+      enable  => $service_enable,
+      start   => sprintf($::initscript::params::start, $name),
+      stop    => sprintf($::initscript::params::stop, $name),
+      status  => sprintf($::initscript::params::status, $name),
     }
   }
 }
