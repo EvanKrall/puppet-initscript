@@ -54,6 +54,10 @@
 #   A hash of key-value pairs specifying hard ulimits that should be applied to
 #   the process. Popular keys include `core` and `nofile`.
 #
+# [*depends*]
+#   A list of dependencies. Only supported by Upstart and Systemd. Upstart will
+#   assume the dependency is /etc/init/name.conf, Systemd will assume it's
+#   name.service
 define initscript(
   $command,
   $manage_service = true,
@@ -70,7 +74,8 @@ define initscript(
   $source_default_file = false,
   $default_file_path = undef,
   $before_command = [],
-  $ulimit = {}
+  $ulimit = {},
+  $depends = [],
 ) {
   validate_array($command)
   validate_array($before_command)

@@ -3,7 +3,7 @@
 <% if @description and @description != '' -%>
 description "<% @description %>"
 <% end -%>
-start on (local-filesystems and net-device-up IFACE!=lo)
+start on (local-filesystems and net-device-up IFACE!=lo <% @depends.each do |v| -%> and starting <%= v %> <% end -%>)
 stop on runlevel [06]
 
 <% @ulimit.each do |k, v| -%>
