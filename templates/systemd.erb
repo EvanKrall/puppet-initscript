@@ -2,7 +2,7 @@
 [Unit]
 Description=<%= @description %>
 Wants=basic.target
-After=basic.target network.target
+After=basic.target network.target <% @depends.each do |v| -%> <%= v %>.service <% end -%>
 
 [Service]
 <% @ulimit.each do |k, v| -%>
