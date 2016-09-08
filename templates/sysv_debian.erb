@@ -136,16 +136,20 @@ case "$1" in
         2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
     esac
     ;;
-  #reload|force-reload)
-    #
-    # If do_reload() is not implemented then leave this commented out
-    # and leave 'force-reload' as an alias for 'restart'.
-    #
-    #log_daemon_msg "Reloading $DESC" "$NAME"
-    #do_reload
-    #log_end_msg $?
-    #;;
+<% if @has_reload -%>
+  reload|force-reload)
+
+     If do_reload() is not implemented then leave this commented out
+     and leave 'force-reload' as an alias for 'restart'.
+
+    log_daemon_msg "Reloading $DESC" "$NAME"
+    do_reload
+    log_end_msg $?
+    ;;
+  restart)
+<% else -%>
   restart|force-reload)
+<% end -%>
     #
     # If the "reload" option is implemented then remove the
     # 'force-reload' alias
@@ -171,8 +175,11 @@ case "$1" in
       status_of_proc -p "$PIDFILE" "$DAEMON" "$NAME" && exit 0 || exit $?
       ;;
   *)
-    #echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload}" >&2
+<% if @has_reload -%>
+    echo "Usage: $SCRIPTNAME {start|stop|status|restart|reload|force-reload}" >&2
+<% else -%>
     echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload}" >&2
+<% end -%>
     exit 3
     ;;
 esac
