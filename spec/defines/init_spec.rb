@@ -2,12 +2,13 @@ require 'spec_helper'
 
 describe 'initscript' do
   let(:title) { "initscriptname" }
-
+  let(:facts) {{
+    :operatingsystem => 'Ubuntu',
+    :lsbdistrelease => '14.04',
+  }}
+ 
   context 'Should compile with just command argument and operatingsystem fact' do
-    let(:facts) {{
-      :operatingsystem => 'Ubuntu',
-    }}
-    let(:params) {{
+   let(:params) {{
       :command => ['hi', 'hello'],
     }}
     it { should compile }
