@@ -1,18 +1,26 @@
 source "http://rubygems.org"
 
 group :test do
+  gem "json", '~> 1.8.3'
+  gem "json_pure", '~> 1.8.3'
   gem "rake"
-  gem 'beaker', '~> 1.11.0'
-  gem "puppet-blacksmith"
   gem "puppet", '~> 3.7.0'
   gem "puppet-lint"
-  gem "rspec-puppet", :git => 'https://github.com/rodjek/rspec-puppet.git'
+  gem "rspec-puppet"
   gem "puppet-syntax"
   gem "puppetlabs_spec_helper"
   gem "hiera-puppet-helper"
 end
 
 group :development do
-  gem 'json'
-  gem 'beaker-rspec'
+  gem "travis"
+  gem "travis-lint"
+  gem "puppet-blacksmith"
+  gem "guard-rake"
+end
+
+group :system_tests do
+  gem "beaker"
+  gem "beaker-rspec"
+  gem "beaker-puppet_install_helper"
 end
