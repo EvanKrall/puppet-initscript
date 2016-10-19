@@ -1,5 +1,3 @@
-# Note: this module is currently under development and may not work.
-
 [![Build Status](https://travis-ci.org/EvanKrall/puppet-initscript.svg?branch=master)](https://travis-ci.org/EvanKrall/puppet-initscript)
 
 # initscript
