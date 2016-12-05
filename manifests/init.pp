@@ -104,7 +104,7 @@ define initscript(
 
   if $source_default_file {
     case $real_init_style {
-      'upstart', 'sysv_redhat' : {}
+      'upstart', 'sysv_redhat', 'systemd' : {}
       default : { fail("source_default_file=true not supported on init style ${real_init_style}") }
     }
   }

@@ -17,7 +17,11 @@ Group=<%= @group %>
 <% @before_command.each do |c| -%>
 ExecStartPre=<%= c.shelljoin %>
 <% end -%>
+<% if @source_default_file %>
+ExecStart=sh -c <%= ("[ -f #{real_default_file_path.shellescape} ] && . #{real_default_file_path.shellescape} ;" + @command.shelljoin).shellescape %>
+<% else %>
 ExecStart=<%= @command.shelljoin %>
+<% end %>
 <% if @reload_command -%>
 ExecReload=<%= @reload_command.shelljoin %>
 <% end -%>

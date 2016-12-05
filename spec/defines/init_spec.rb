@@ -6,7 +6,7 @@ describe 'initscript' do
     :operatingsystem => 'Ubuntu',
     :lsbdistrelease => '14.04',
   }}
- 
+
   context 'Should compile with just command argument and operatingsystem fact' do
    let(:params) {{
       :command => ['hi', 'hello'],
@@ -208,6 +208,19 @@ describe 'initscript' do
       should contain_file('initscript initscriptname') \
         .with_content(%r{^    ulimit -H -n 1\n    ulimit -S -n 1$})
         .with_content(%r{^    ulimit -H -m 2\n    ulimit -S -m 2$})
+    }
+  end
+
+  context 'systemd sources /etc/default/initscriptname' do
+    let(:params) {{
+      :command => ['foo', 'bar'],
+      :init_style => 'systemd',
+      :source_default_file => true,
+    }}
+    it {
+      should contain_file('initscript initscriptname') \
+        .with_path('/lib/systemd/system/initscriptname.service')
+        .with_content(%r{^ExecStart=sh -c \\\[\\ -f\\ /etc/default/initscriptname\\ \\\]\\ \\&\\&\\ .\\ /etc/default/initscriptname\\ \\;foo\\ bar}) \
     }
   end
 
