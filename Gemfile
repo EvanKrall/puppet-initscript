@@ -10,6 +10,7 @@ group :test do
   gem "puppet-syntax"
   gem "puppetlabs_spec_helper"
   gem "hiera-puppet-helper"
+  gem "safe_yaml"
 end
 
 group :development do
