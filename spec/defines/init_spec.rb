@@ -220,7 +220,7 @@ describe 'initscript' do
     it {
       should contain_file('initscript initscriptname') \
         .with_path('/lib/systemd/system/initscriptname.service')
-        .with_content(%r{^ExecStart=sh -c \\\[\\ -f\\ /etc/default/initscriptname\\ \\\]\\ \\&\\&\\ .\\ /etc/default/initscriptname\\ \\;foo\\ bar}) \
+        .with_content(%r{^ExecStart=/bin/sh -c \\\[\\ -f\\ /etc/default/initscriptname\\ \\\]\\ \\&\\&\\ .\\ /etc/default/initscriptname\\ \\;foo\\ bar}) \
     }
   end
 
