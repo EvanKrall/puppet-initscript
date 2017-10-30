@@ -58,7 +58,7 @@
 #   A list of dependencies. Only supported by Upstart and Systemd. Upstart will
 #   assume the dependency is /etc/init/name.conf, Systemd will assume it's
 #   name.service
-define initscript(
+define initscript (
   $command,
   $manage_service = true,
   $user = undef,
@@ -116,9 +116,10 @@ define initscript(
         mode    => '0444',
         owner   => 'root',
         group   => 'root',
+        replace => $service_ensure == 'running',
         content => template('initscript/upstart.erb'),
       }
-      file { "/etc/init.d/${name}":
+      -> file { "/etc/init.d/${name}":
         ensure => link,
         target => '/lib/init/upstart-job',
         owner  => 'root',
@@ -133,8 +134,8 @@ define initscript(
         owner   => 'root',
         group   => 'root',
         content => template('initscript/systemd.erb'),
-      } ~>
-      exec { 'systemctl-daemon-reload':
+      }
+      ~> exec { 'systemctl-daemon-reload':
         command => 'systemctl daemon-reload',
       }
     }
@@ -188,8 +189,8 @@ define initscript(
   if $manage_service {
     #TODO: maybe make the choice of whether to reload the service
     # configurable.
-    File["initscript ${name}"] ~>
-    service { $name:
+    File["initscript ${name}"]
+    ~> service { $name:
       ensure => $service_ensure,
       name   => $init_selector,
       enable => $service_enable,
